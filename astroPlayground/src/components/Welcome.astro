@@ -1,23 +1,24 @@
 ---
-// Page.astro
 import Footer from "../components/Footer.astro";
+import LoginModal from "../components/LoginModal.astro";
 ---
-	<div class="flex flex-col items-center justify-center flex-grow h-3/4">
-		<div class="mb-8 grid grid-cols-1 px-4 md:px-0"> 
-			<h1 class="text-center text-4xl mb-10 text-white font-bold">Bienvenido a <span class="font-bold text-[#8d6aed]">WeeURL</span></h1>
-			<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mx-auto mt-10 max-w-screen-lg">
-				<div>
-					<h1 class="text-4xl mb-4 font-bold">El mejor acortador de URLs</h1>
-					<p class="text-pretty mb-4">Crea URLs más cortas con <span>WeeURL</span>.</p>
-					<p class="text-pretty">¿Quieres más de tu acortador de enlaces? Rastrea las analíticas de los enlaces, usa dominios personalizados para enlaces completamente personalizados y gestiona tus enlaces con nuestros planes de pago.</p>
-				</div>
-				<div class="text-black rounded-lg mb-8 w-full h-auto pt-2 pb-2 grid grid-cols-1 justify-center items-center">
-					<form action="" class="bg-white/90 rounded-lg p-4 grid grid-cols-1 w-full shadow-[#8d6aed] shadow-xl">
-						<label for="enlace" class="text-2xl mb-2 text-center text-gray-600">Introduce tu enlace </label>
-						<input type="text" id="enlace" class="border-2 mb-2 border-[#6633ee]/60 focus:outline-none focus-within:border-[#6633ee] rounded-lg p-2 mt-2 w-full" placeholder="https://www.google.com"/>
-						<button class="bg-[#6633ee]/60 hover:bg-[#6633ee] rounded-2xl text-white/90 hover:text-white font-bold h-10 w-full transition-colors">Acortar</button>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
+<div class="flex flex-col items-center justify-center flex-grow h-3/4">
+    <div class="mb-8 grid grid-cols-1 px-4 md:px-0"> 
+        <h1 class="text-center text-4xl mb-10 text-white font-bold">Bienvenido a <span class="font-bold text-[#8d6aed]">WeeURL</span></h1>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mx-auto mt-10 max-w-screen-lg">
+            <div>
+                <h1 class="text-4xl mb-4 font-bold">El mejor acortador de URLs</h1>
+                <p class="text-pretty mb-4">Crea URLs más cortas con <span>WeeURL</span>.</p>
+                <p class="text-pretty">¿Quieres más de tu acortador de enlaces? Rastrea las analíticas de los enlaces, usa dominios personalizados para enlaces completamente personalizados y gestiona tus enlaces con nuestros planes de pago.</p>
+            </div>
+            <div class="text-black rounded-lg mb-8 w-full h-auto pt-2 pb-2 grid grid-cols-1 justify-center items-center">
+                <form action="" class="bg-white/90 rounded-lg p-4 grid grid-cols-1 w-full shadow-[#8d6aed] shadow-xl">
+                    <label for="enlace" class="text-2xl mb-2 text-center text-gray-600">Introduce tu enlace </label>
+                    <input type="text" id="enlace" class="border-2 mb-2 border-[#6633ee]/60 focus:outline-none focus-within:border-[#6633ee] rounded-lg p-2 mt-2 w-full" placeholder="https://www.google.com" required/>
+                    <button class="bg-[#6633ee]/60 hover:bg-[#6633ee] rounded-2xl text-white/90 hover:text-white font-bold h-10 w-full transition-colors">Acortar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+	<LoginModal />
