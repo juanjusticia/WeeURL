@@ -15,7 +15,9 @@ import "@fontsource-variable/plus-jakarta-sans";
 	</head>
 	<body class="flex flex-col min-h-screen">
 		<main class="flex-grow">
+			<div class="light"></div>
 			<slot />
+			<script src="../../js/light.js"></script>
 		</main>
 	</body>
 </html>
@@ -26,8 +28,20 @@ import "@fontsource-variable/plus-jakarta-sans";
 		margin: 0;
 		width: 100%;
 		height: 100%;
-		background: radial-gradient(125% 125% at 50% 10%,#000 40%,#6633ee 100%);
+		background: radial-gradient(125% 125% at 50% 10%,#000 40%,rgb(102, 51, 238) 100%);
 		color: white;
 		font-family: 'Plus Jakarta Sans', "system-ui", sans-serif;
 	}
+	
+	.light {
+		position: absolute;
+		width: 100px;
+		height: 100px;
+		background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255, 255, 255, 0) 70%);
+		pointer-events: none;
+		mix-blend-mode: screen;
+		transition: transform 0.1s ease-out;
+	}
+
+
 </style>

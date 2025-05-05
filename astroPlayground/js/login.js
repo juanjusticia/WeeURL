@@ -29,10 +29,10 @@ document
     extraField.classList.toggle("hidden");
     document.getElementById("loginField").innerHTML =
       document.getElementById("loginField").innerHTML == "Login"
-        ? "Regístrarse"
+        ? "Regístrate"
         : "Login";
 
-    this.innerHTML = this.innerHTML == "Login" ? "Regístrarse" : "Login";
+    this.innerHTML = this.innerHTML == "Login" ? "Regístrate" : "Login";
 
     document.getElementById("labelRegistro").innerHTML =
       document.getElementById("labelRegistro").innerHTML ==
