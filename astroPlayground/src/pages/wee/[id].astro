@@ -1,0 +1,39 @@
+---
+export const prerender = false;
+---
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Redireccionando...</title>
+    <meta http-equiv="refresh" content="0;url=/" />
+    <script>
+  // Buscar el enlace original en localStorage y redirigir
+  (function() {
+    try {
+      const links = JSON.parse(localStorage.getItem('links') || '[]');
+      // Obtener el id de la URL
+      const path = window.location.pathname;
+      const id = path.substring(path.lastIndexOf('/') + 1);
+      const short = `${window.location.origin}/wee/${id}`;
+      const found = links.find((link: any) => link.short === short);
+      if (found) {
+        window.location.replace(found.original);
+      } else {
+        // No encontrado, mostrar mensaje y volver al inicio tras 2s
+        var msgDiv = document.getElementById('msg');
+        if (msgDiv) msgDiv.textContent = 'Enlace no encontrado. Redirigiendo a inicio...';
+        setTimeout(() => window.location.replace('/'), 1800);
+      }
+    } catch (e) {
+      window.location.replace('/');
+    }
+  })();
+</script>
+  </head>
+  <body class="bg-[#6633ee] flex items-center justify-center min-h-screen">
+    <div class="bg-white/90 rounded-lg shadow-xl p-8 text-center">
+      <div class="text-2xl text-[#6633ee] font-bold mb-2">Redireccionando...</div>
+      <div id="msg" class="text-gray-700">Un momento por favor.</div>
+    </div>
+  </body>
+</html>

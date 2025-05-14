@@ -1,8 +1,8 @@
 # Frontend TODO
 
- - [ ] Inicializar el proyecto con cada uno de los frameworks y code analycer a usar.
- - [ ] Creación de la landing page.
- - [ ] Creación de la login page.
+ - [x] Inicializar el proyecto con cada uno de los frameworks y code analycer a usar.
+ - [x] Creación de la landing page.
+ - [x] Creación de la login page.
  - [ ] Creación de la administrator page.
  - [ ] Creación de la user page.
  - [ ] Lógica de login
