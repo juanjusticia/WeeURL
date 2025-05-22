@@ -1,9 +1,12 @@
 ---
+export const prerender = false;
+
 // Obtener el ID del parámetro de la ruta
 const { id } = Astro.params;
 import Layout from '../../layouts/Layout.astro';
 import '../../styles/global.css';
 ---
+
 
 <Layout title="Redireccionando - WeeURL">
   <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#6633ee] to-[#8d6aed] p-4">
