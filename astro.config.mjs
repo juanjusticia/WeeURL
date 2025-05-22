@@ -18,6 +18,7 @@ export default defineConfig({
       proxy: {
         "/api": "https://apiweeurl.onrender.com/",
       },
+      host: true,
     },
   },
 });
