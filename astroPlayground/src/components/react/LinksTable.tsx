@@ -130,9 +130,9 @@ const LinksTable = () => {
     return (
       <div className="text-center py-8">
         <p className="text-gray-600 mb-4">No tienes ningún enlace acortado aún.</p>
-        <button className="bg-[#8d6aed] hover:bg-[#7a5acd] text-white font-bold py-2 px-6 rounded-full transition-colors">
+        <a href="/" className="bg-[#8d6aed] hover:bg-[#7a5acd] text-white font-bold py-2 px-6 rounded-full transition-colors">
           Crear mi primer enlace
-        </button>
+        </a>
       </div>
     );
   }

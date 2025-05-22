@@ -1,9 +1,9 @@
 // loginAuth.js
 import { login as apiLogin, register as apiRegister } from './apiService';
 
-async function login(email, password) {
+async function login(username, password) {
   try {
-    const response = await apiLogin(email, password);
+    const response = await apiLogin(username, password);
     if (response) {
       // Store user data
       console.log(response);
@@ -67,10 +67,10 @@ window.addEventListener("DOMContentLoaded", () => {
   form.addEventListener("submit", async function (e) {
     e.preventDefault();
     
-    const user = form.querySelector("#user").value;
+    const username = form.querySelector("#user").value;
     const password = form.querySelector("#password").value;
-    const usernameField = form.querySelector("#username");
-    const isRegister = !form.querySelector("#extraField").classList.contains("hidden");
+    const emailField = form.querySelector("#email");
+    const isRegister = emailField && !form.querySelector("#extraField").classList.contains("hidden");
     
     // Show loading state
     const submitButton = form.querySelector('button[type="submit"]');
@@ -80,38 +80,49 @@ window.addEventListener("DOMContentLoaded", () => {
     
     try {
       if (isRegister) {
-        const nombre = usernameField.value;
-        if (!nombre || !email || !password) {
+        const email = emailField ? emailField.value : '';
+        if (!username || !email || !password) {
           showLoginMessage("Rellena todos los campos", "error");
           return;
         }
         
-        const success = await register({ nombre, user, password });
-        if (success) {
+        // Call the register API
+        const userData = await register({ username, email, password });
+        if (userData) {
+          // Store user data in localStorage
+          localStorage.setItem('currentUser', JSON.stringify(userData));
           document.getElementById("loginModal").classList.add("hidden");
           showLoginMessage("¡Registro exitoso! Redirigiendo...", "success");
+          
+          // Redirect based on user role
           setTimeout(() => {
-            window.location.href = "/dashboard";
+            const redirectPath = userData.rol === 'Admin' ? '/admin' : '/dashboard';
+            window.location.href = redirectPath;
           }, 1500);
         } else {
           showLoginMessage("Error en el registro. Inténtalo de nuevo.", "error");
         }
       } else {
-        const userData = await login(user, password);
+        // Handle login
+        if (!username || !password) {
+          showLoginMessage("Por favor, introduce usuario y contraseña", "error");
+          return;
+        }
+        
+        const userData = await login(username, password);
         if (userData) {
-          showLoginMessage(`Bienvenido, ${userData.nombre || userData.user}`, "success");
+          // Store user data in localStorage
+          localStorage.setItem('currentUser', JSON.stringify(userData));
           document.getElementById("loginModal").classList.add("hidden");
+          showLoginMessage(`¡Bienvenido, ${userData.username || userData.user || 'usuario'}!`, "success");
           
-          // Redirección según rol
+          // Redirect based on user role
           setTimeout(() => {
-            if (userData.rol === "Admin") {
-              window.location.href = "/admin";
-            } else {
-              window.location.href = "/dashboard";
-            }
-          }, 500);
+            const redirectPath = userData.rol === 'Admin' ? '/admin' : '/dashboard';
+            window.location.href = redirectPath;
+          }, 1500);
         } else {
-          showLoginMessage("Email o contraseña incorrectos", "error");
+          showLoginMessage("Usuario o contraseña incorrectos", "error");
         }
       }
     } catch (error) {
