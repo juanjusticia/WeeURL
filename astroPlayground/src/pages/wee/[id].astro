@@ -1,39 +1,124 @@
 ---
-export const prerender = false;
+// Obtener el ID del parámetro de la ruta
+const { id } = Astro.params;
+import Layout from '../../layouts/Layout.astro';
+import '../../styles/global.css';
 ---
-<html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>Redireccionando...</title>
-    <meta http-equiv="refresh" content="0;url=/" />
-    <script>
-  // Buscar el enlace original en localStorage y redirigir
-  (function() {
-    try {
-      const links = JSON.parse(localStorage.getItem('links') || '[]');
-      // Obtener el id de la URL
+
+<Layout title="Redireccionando - WeeURL">
+  <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#6633ee] to-[#8d6aed] p-4">
+    <div class="w-full max-w-md">
+      <div class="bg-white/90 backdrop-blur-sm rounded-xl shadow-2xl overflow-hidden">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-[#8d6aed] to-[#6633ee] p-6 text-center">
+          <h1 class="text-2xl font-bold text-white">Redireccionando</h1>
+          <p class="text-white/90 mt-1">Por favor, espera un momento</p>
+        </div>
+        
+        <!-- Content -->
+        <div class="p-8 text-center">
+          <div class="loader mx-auto"></div>
+          <h2 id="status" class="text-xl font-semibold text-gray-800 mb-2">Procesando enlace...</h2>
+          <p id="message" class="text-gray-600 mb-6">Estamos preparando tu redirección</p>
+          
+          <div class="mt-6 pt-6 border-t border-gray-100">
+            <p class="text-sm text-gray-500">
+              ¿No se redirige automáticamente?
+              <a href="#" id="redirectLink" class="text-primary hover:underline font-medium ml-1">
+                Haz clic aquí
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .loader {
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top: 4px solid #8d6aed;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 1.5rem;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+
+  <script>
+    import { getLink } from '../../../js/apiService';
+    
+    // Type definitions for TypeScript
+    interface LinkData {
+      enlace_largo: string;
+      // Add other properties if they exist
+    }
+    
+    async function redirectToLink() {
+      const statusEl = document.getElementById('status');
+      const messageEl = document.getElementById('message');
+      const redirectLink = document.getElementById('redirectLink') as HTMLAnchorElement | null;
       const path = window.location.pathname;
       const id = path.substring(path.lastIndexOf('/') + 1);
-      const short = `${window.location.origin}/wee/${id}`;
-      const found = links.find((link: any) => link.short === short);
-      if (found) {
-        window.location.replace(found.original);
-      } else {
-        // No encontrado, mostrar mensaje y volver al inicio tras 2s
-        var msgDiv = document.getElementById('msg');
-        if (msgDiv) msgDiv.textContent = 'Enlace no encontrado. Redirigiendo a inicio...';
-        setTimeout(() => window.location.replace('/'), 1800);
+      
+      function updateUI(status: string, message: string, isError: boolean = false): void {
+        if (statusEl) statusEl.textContent = status;
+        if (messageEl) {
+          messageEl.textContent = message;
+          messageEl.className = isError 
+            ? 'text-red-600 mb-6 font-medium' 
+            : 'text-gray-600 mb-6';
+        }
       }
-    } catch (e) {
-      window.location.replace('/');
+      
+      try {
+        updateUI('Buscando enlace...', 'Estamos verificando tu enlace acortado');
+        
+        const linkData = await getLink(id);
+        console.log('Link data:', linkData);
+        
+        if (linkData?.enlace_largo) {
+          updateUI('¡Redirigiendo!', 'Serás redirigido en breve...');
+          
+          // Actualizar el enlace de redirección manual
+          if (redirectLink) {
+            redirectLink.href = linkData.enlace_largo;
+            redirectLink.onclick = (e: MouseEvent) => {
+              e.preventDefault();
+              window.location.href = linkData.enlace_largo;
+            };
+          }
+          
+          // Redirigir después de un breve retraso
+          setTimeout(() => {
+            window.location.href = linkData.enlace_largo;
+          }, 1500);
+          
+        } else {
+          throw new Error('Enlace no encontrado');
+        }
+        
+      } catch (error) {
+        console.error('Redirection error:', error);
+        updateUI(
+          '¡Ups! Algo salió mal', 
+          'No pudimos encontrar el enlace solicitado. Serás redirigido a la página de inicio.',
+          true
+        );
+        
+        // Redirigir a inicio después de un retraso
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 3000);
+      }
     }
-  })();
-</script>
-  </head>
-  <body class="bg-[#6633ee] flex items-center justify-center min-h-screen">
-    <div class="bg-white/90 rounded-lg shadow-xl p-8 text-center">
-      <div class="text-2xl text-[#6633ee] font-bold mb-2">Redireccionando...</div>
-      <div id="msg" class="text-gray-700">Un momento por favor.</div>
-    </div>
-  </body>
-</html>
+    
+    // Iniciar el proceso de redirección cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', redirectToLink);
+  </script>
+</Layout>

@@ -3,7 +3,8 @@ import axios from 'axios';
 
 // Configuración de la API
 const api = axios.create({
-  baseURL: 'http://localhost:3000/api',
+  baseURL: '/api', // Usar ruta relativa que será manejada por el proxy de Vite
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -48,10 +49,21 @@ export const getUserLinks = async (userId) => {
   }
 };
 
+// Obtener un enlace por su código de enlace
+export const getLink = async (codEnlace) => {
+  try {
+    const response = await api.get(`/links/${codEnlace}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener el enlace:', error);
+    throw error;
+  }
+};
+
 // Eliminar un enlace
 export const deleteLink = async (linkId) => {
   try {
-    const response = await api.delete(`/api/links/${linkId}`);
+    const response = await api.delete(`/links/${linkId}`);
     return response.data;
   } catch (error) {
     console.error('Error al eliminar el enlace:', error);
