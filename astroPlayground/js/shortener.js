@@ -44,14 +44,16 @@ document.addEventListener('DOMContentLoaded', function() {
       const requestData = {
         enlace_largo: original,
         enlace_acortado: shortUrl,
-        cod_enlace: shortCode
+        cod_enlace: shortCode,
       };
       
-      // Añadir usuario_id solo si el usuario está autenticado
-      if (user && user.id) {
-        requestData.usuario_id = user.id;
-      }
+      // Obtener usuario del localStorage si existe
+      const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
       
+      // Añadir usuario_id si el usuario está autenticado
+      if (currentUser) {
+        requestData.usuario_id = currentUser.user.id;
+      }
       // Enviar a la API usando el servicio configurado
       const response = await api.post('/links', requestData);
 
