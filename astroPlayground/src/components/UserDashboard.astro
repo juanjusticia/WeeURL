@@ -1,0 +1,65 @@
+---
+import LinksTable from "./react/LinksTable";
+
+// UserDashboard.astro
+// Componente principal del panel de usuario
+
+// Habilitar soporte para componentes de React
+---
+
+<div class="flex flex-col items-center justify-center flex-grow min-h-[70vh]">
+  <div class="w-full max-w-6xl px-4 md:px-6">
+    <h1 class="text-center text-4xl mb-10 text-white font-bold">Panel de <span class="text-[#8d6aed]">Usuario</span></h1>
+    
+    <div class="bg-white/90 rounded-lg p-6 mb-8 shadow-[#8d6aed] shadow-lg">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">Mis Enlaces Acortados</h2>
+        <a href="/" class="bg-[#8d6aed] hover:bg-[#7a5acd] text-white font-bold py-2 px-4 rounded-full transition-colors no-underline">
+          Acortar Nuevo Enlace
+        </a>
+      </div>
+      
+      {/* Componente de React */}
+      <LinksTable client:load />
+
+    </div>
+    
+    <div class="bg-gradient-to-r from-[#8d6aed] to-[#6633ee] text-white p-6 rounded-lg shadow-lg">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <div class="mb-4 md:mb-0">
+          <h2 class="text-2xl font-bold mb-2">Estadísticas de tus enlaces</h2>
+          <p>Revisa el rendimiento de tus enlaces acortados.</p>
+        </div>
+        <button class="bg-white text-[#6633ee] hover:bg-gray-100 font-bold py-2 px-6 rounded-full transition-colors">
+          Ver Estadísticas
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Custom styles for the table */
+  table {
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  
+  th, td {
+    padding: 0.75rem 1.5rem;
+  }
+  
+  thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+  
+  tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 0.5rem;
+  }
+  
+  tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 0.5rem;
+  }
+</style>

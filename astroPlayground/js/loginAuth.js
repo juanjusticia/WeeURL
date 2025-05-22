@@ -1,34 +1,35 @@
 // loginAuth.js
-// Usuarios de prueba
-defaultUsers = [
-  { email: "admin@email.com", password: "admin123", nombre: "Admin", rol: "Admin" },
-  { email: "juan@email.com", password: "juan123", nombre: "Juan", rol: "Usuario" },
-  { email: "ana@email.com", password: "ana123", nombre: "Ana", rol: "Usuario" },
-];
+import { login as apiLogin, register as apiRegister } from './apiService';
 
-function getUsers() {
-  // Si hay usuarios guardados en localStorage, usarlos
-  const users = localStorage.getItem("users");
-  return users ? JSON.parse(users) : defaultUsers;
+async function login(email, password) {
+  try {
+    const response = await apiLogin(email, password);
+    if (response) {
+      // Store user data
+      console.log(response);
+      localStorage.setItem('currentUser', JSON.stringify(response));
+      return response;
+    }
+    return null;
+  } catch (error) {
+    console.error('Login error:', error);
+    return null;
+  }
 }
 
-function saveUsers(users) {
-  localStorage.setItem("users", JSON.stringify(users));
-}
-
-function login(email, password) {
-  const users = getUsers();
-  return users.find(
-    (u) => u.email === email && u.password === password
-  );
-}
-
-function register(nombre, email, password) {
-  let users = getUsers();
-  if (users.find((u) => u.email === email)) return false; // Ya existe
-  users.push({ nombre, email, password, rol: "Usuario" });
-  saveUsers(users);
-  return true;
+async function register(userData) {
+  try {
+    const response = await apiRegister(userData);
+    if (response) {
+      // Store user data
+      localStorage.setItem('currentUser', JSON.stringify(response));
+      return true;
+    }
+    return false;
+  } catch (error) {
+    console.error('Registration error:', error);
+    return false;
+  }
 }
 
 // Manejo del formulario
@@ -62,48 +63,65 @@ function showLoginMessage(msg, type = "info") {
 window.addEventListener("DOMContentLoaded", () => {
   const form = document.querySelector("#loginModal form");
   if (!form) return;
-  form.addEventListener("submit", function (e) {
+  
+  form.addEventListener("submit", async function (e) {
     e.preventDefault();
-    const email = form.querySelector("#email").value;
+    
+    const user = form.querySelector("#user").value;
     const password = form.querySelector("#password").value;
     const usernameField = form.querySelector("#username");
     const isRegister = !form.querySelector("#extraField").classList.contains("hidden");
-    if (isRegister) {
-      const nombre = usernameField.value;
-      if (!nombre || !email || !password) {
-        showLoginMessage("Rellena todos los campos", "error");
-        return;
-      }
-      if (register(nombre, email, password)) {
-        // Guardar usuario logueado y redirigir a dashboard
-        const newUser = { nombre, email, password, rol: "Usuario" };
-        localStorage.setItem("currentUser", JSON.stringify(newUser));
-        document.getElementById("loginModal").classList.add("hidden");
-        setTimeout(() => {
-          window.location.href = "/dashboard";
-        }, 400);
-      } else {
-        showLoginMessage("Ese email ya está registrado.", "error");
-      }
-    } else {
-      const user = login(email, password);
-      if (user) {
-        showLoginMessage(`Bienvenido, ${user.nombre} (${user.rol})`, "success");
-        // Guardar usuario logueado
-        localStorage.setItem("currentUser", JSON.stringify(user));
-        // Cerrar modal
-        document.getElementById("loginModal").classList.add("hidden");
-        // Redirección según rol
-        setTimeout(() => {
-          if (user.rol === "Admin") {
-            window.location.href = "/admin";
-          } else {
+    
+    // Show loading state
+    const submitButton = form.querySelector('button[type="submit"]');
+    const originalButtonText = submitButton.textContent;
+    submitButton.disabled = true;
+    submitButton.textContent = 'Procesando...';
+    
+    try {
+      if (isRegister) {
+        const nombre = usernameField.value;
+        if (!nombre || !email || !password) {
+          showLoginMessage("Rellena todos los campos", "error");
+          return;
+        }
+        
+        const success = await register({ nombre, user, password });
+        if (success) {
+          document.getElementById("loginModal").classList.add("hidden");
+          showLoginMessage("¡Registro exitoso! Redirigiendo...", "success");
+          setTimeout(() => {
             window.location.href = "/dashboard";
-          }
-        }, 500);
+          }, 1500);
+        } else {
+          showLoginMessage("Error en el registro. Inténtalo de nuevo.", "error");
+        }
       } else {
-        showLoginMessage("Email o contraseña incorrectos", "error");
+        const userData = await login(user, password);
+        if (userData) {
+          showLoginMessage(`Bienvenido, ${userData.nombre || userData.user}`, "success");
+          document.getElementById("loginModal").classList.add("hidden");
+          
+          // Redirección según rol
+          setTimeout(() => {
+            if (userData.rol === "Admin") {
+              window.location.href = "/admin";
+            } else {
+              window.location.href = "/dashboard";
+            }
+          }, 500);
+        } else {
+          showLoginMessage("Email o contraseña incorrectos", "error");
+        }
       }
+    } catch (error) {
+      console.error('Authentication error:', error);
+      const errorMessage = error.response?.data?.message || 'Error de conexión. Inténtalo de nuevo.';
+      showLoginMessage(errorMessage, "error");
+    } finally {
+      // Restore button state
+      submitButton.disabled = false;
+      submitButton.textContent = originalButtonText;
     }
   });
 });
