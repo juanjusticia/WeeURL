@@ -1,6 +1,119 @@
 // loginAuth.js
 import { login as apiLogin, register as apiRegister } from './apiService';
 
+// Función para mostrar/ocultar el modal de recuperación de contraseña
+function togglePasswordRecoveryModal(show = true) {
+  const modal = document.getElementById('passwordRecoveryModal');
+  if (!modal) return;
+  
+  if (show) {
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    // Enfocar el campo de email cuando se abre el modal
+    setTimeout(() => document.getElementById('recoveryEmail')?.focus(), 100);
+  } else {
+    modal.classList.remove('flex');
+    modal.classList.add('hidden');
+  }
+}
+
+// Función para mostrar mensajes en el formulario de recuperación
+function showRecoveryMessage(message, isError = false) {
+  const messageElement = document.getElementById('recoveryMessage');
+  if (!messageElement) return;
+  
+  messageElement.textContent = message;
+  messageElement.className = 'mb-4 p-3 rounded text-sm';
+  messageElement.classList.add(isError ? 'error-message' : 'success-message');
+  messageElement.classList.remove('hidden');
+  
+  // Ocultar el mensaje después de 5 segundos
+  if (!isError) {
+    setTimeout(() => {
+      messageElement.classList.add('hidden');
+    }, 5000);
+  }
+}
+
+// Función para manejar el envío del formulario de recuperación
+async function handlePasswordRecovery(event) {
+  event.preventDefault();
+  
+  const emailInput = document.getElementById('recoveryEmail');
+  const email = emailInput?.value.trim();
+  
+  if (!email) {
+    showRecoveryMessage('Por favor, introduce tu correo electrónico', true);
+    return;
+  }
+  
+  try {
+    // Mostrar indicador de carga
+    const submitButton = event.target.querySelector('button[type="submit"]');
+    let originalButtonText = '';
+    
+    if (submitButton) {
+      originalButtonText = submitButton.textContent;
+      submitButton.disabled = true;
+      submitButton.innerHTML = 'Enviando...';
+    }
+    
+    // Enviar la solicitud al servidor
+    const response = await fetch('/api/auth/forgot-password', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email }),
+    });
+    
+    let data;
+    const contentType = response.headers.get('content-type');
+    
+    try {
+      if (contentType && contentType.includes('application/json')) {
+        data = await response.json();
+      } else {
+        const text = await response.text();
+        console.error('Respuesta inesperada del servidor:', text);
+        throw new Error('El servidor devolvió una respuesta inesperada');
+      }
+      
+      if (response.ok) {
+        // Mostrar mensaje de éxito
+        showRecoveryMessage('Se ha enviado un correo con las instrucciones para restablecer tu contraseña. Por favor, revisa tu bandeja de entrada.');
+        
+        // Limpiar el formulario
+        if (emailInput) emailInput.value = '';
+        
+        // Cerrar el modal después de 3 segundos
+        setTimeout(() => {
+          togglePasswordRecoveryModal(false);
+        }, 3000);
+      } else {
+        // Mostrar mensaje de error del servidor
+        showRecoveryMessage(data.message || 'Error al procesar la solicitud', true);
+      }
+    } catch (parseError) {
+      console.error('Error al procesar la respuesta:', parseError);
+      if (response.status === 404) {
+        showRecoveryMessage('El servicio de recuperación de contraseña no está disponible en este momento', true);
+      } else {
+        showRecoveryMessage('Error en el servidor. Por favor, inténtalo de nuevo más tarde.', true);
+      }
+    }
+  } catch (error) {
+    console.error('Error al enviar la solicitud de recuperación:', error);
+    showRecoveryMessage('Error de conexión. Por favor, inténtalo de nuevo más tarde.', true);
+  } finally {
+    // Restaurar el botón
+    if (submitButton && originalButtonText) {
+      submitButton.disabled = false;
+      submitButton.textContent = originalButtonText;
+    }
+  }
+}
+
 // Función para iniciar sesión con Google
 function loginWithGoogle() {
   try {
@@ -136,6 +249,37 @@ window.addEventListener("DOMContentLoaded", () => {
   const googleLoginBtn = document.getElementById('googleLoginBtn');
   if (googleLoginBtn) {
     googleLoginBtn.addEventListener('click', loginWithGoogle);
+  }
+  
+  // Configurar el enlace de "¿Olvidaste tu contraseña?"
+  const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+  if (forgotPasswordLink) {
+    forgotPasswordLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      togglePasswordRecoveryModal(true);
+    });
+  }
+  
+  // Configurar el botón de cierre del modal de recuperación
+  const closeRecoveryModal = document.getElementById('closeRecoveryModal');
+  if (closeRecoveryModal) {
+    closeRecoveryModal.addEventListener('click', () => togglePasswordRecoveryModal(false));
+  }
+  
+  // Configurar el envío del formulario de recuperación
+  const recoveryForm = document.getElementById('passwordRecoveryForm');
+  if (recoveryForm) {
+    recoveryForm.addEventListener('submit', handlePasswordRecovery);
+  }
+  
+  // Cerrar el modal al hacer clic fuera del contenido
+  const recoveryModal = document.getElementById('passwordRecoveryModal');
+  if (recoveryModal) {
+    recoveryModal.addEventListener('click', (e) => {
+      if (e.target === recoveryModal) {
+        togglePasswordRecoveryModal(false);
+      }
+    });
   }
   
   const form = document.querySelector("#loginModal form");

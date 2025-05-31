@@ -17,6 +17,11 @@
             <button type="submit" class="bg-[#6633ee]/60 hover:bg-[#6633ee] rounded-2xl text-white/90 hover:text-white font-bold h-10 w-full transition-colors">
                 Enviar
             </button>
+            
+            <div class="mt-3 text-center">
+                <a href="#" id="forgotPasswordLink" class="text-sm text-[#6633ee] hover:underline">¿Olvidaste tu contraseña?</a>
+            </div>
+            
             <div class="relative my-4">
                 <div class="absolute inset-0 flex items-center">
                     <div class="w-full border-t border-gray-300"></div>
@@ -41,4 +46,47 @@
         </div>
     </div>
 </div>
+
+<!-- Modal de recuperación de contraseña -->
+<div id="passwordRecoveryModal" class="fixed inset-0 items-center justify-center bg-black/60 transition-opacity duration-300 z-50 hidden">
+    <div class="bg-white p-8 rounded-lg shadow-lg transform transition-transform duration-300 scale-95 w-full max-w-md mx-4">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold text-gray-800">Recuperar contraseña</h3>
+            <button id="closeRecoveryModal" class="text-gray-500 hover:text-gray-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        <p class="text-gray-600 mb-4">Introduce tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.</p>
+        
+        <form id="passwordRecoveryForm">
+            <div class="mb-4">
+                <label for="recoveryEmail" class="block text-gray-700 mb-1">Correo electrónico</label>
+                <input type="email" id="recoveryEmail" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6633ee]" required>
+            </div>
+            
+            <div id="recoveryMessage" class="hidden mb-4 p-3 rounded text-sm"></div>
+            
+            <button type="submit" class="w-full bg-[#6633ee] text-white py-2 px-4 rounded-md hover:bg-[#5a2ce0] transition-colors">
+                Enviar enlace de recuperación
+            </button>
+        </form>
+    </div>
+</div>
+
+<style>
+    /* Estilos para los mensajes de éxito y error */
+    .success-message {
+        background-color: rgba(74, 222, 128, 0.1);
+        border: 1px solid #4ade80;
+        color: #166534;
+    }
+    .error-message {
+        background-color: rgba(248, 113, 113, 0.1);
+        border: 1px solid #f87171;
+        color: #991b1b;
+    }
+</style>
+
 <script type="module" src="/js/loginAuth.js" defer></script>
