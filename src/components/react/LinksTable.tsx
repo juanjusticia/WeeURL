@@ -48,10 +48,41 @@ const LinksTable = () => {
 
   // Get current user
   const getCurrentUser = () => {
-    const userDataStr = localStorage.getItem('currentUser');
-    if (!userDataStr) return null;
-    const userData = JSON.parse(userDataStr);
-    return userData?.user || null;
+    try {
+      console.log('Buscando usuario en localStorage...');
+      const userDataStr = localStorage.getItem('currentUser');
+      console.log('Datos de usuario en localStorage:', userDataStr);
+      
+      if (!userDataStr) {
+        console.log('No se encontraron datos de usuario en localStorage');
+        return null;
+      }
+      
+      const userData = JSON.parse(userDataStr);
+      console.log('Datos de usuario parseados:', userData);
+      
+      // Verificar si el token está presente y no ha expirado
+      if (userData.token) {
+        console.log('Token encontrado, verificando expiración...');
+        const tokenExpiration = userData.expiresIn * 1000; // Convertir a milisegundos
+        const now = Date.now();
+        
+        if (now > userData.timestamp + tokenExpiration) {
+          console.log('Token expirado');
+          localStorage.removeItem('currentUser');
+          return null;
+        }
+      }
+      
+      // Retornar el objeto user directamente si existe, o el objeto completo si no
+      const user = userData?.user || userData;
+      console.log('Usuario obtenido:', user);
+      return user;
+      
+    } catch (error) {
+      console.error('Error al obtener el usuario actual:', error);
+      return null;
+    }
   };
 
   // Fetch user links

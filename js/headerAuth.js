@@ -5,17 +5,26 @@ document.addEventListener("DOMContentLoaded", function () {
   const nav = loginBtn.parentElement;
   let user = null;
   try {
-    user = JSON.parse(localStorage.getItem("currentUser"));
-  } catch {}
+    const userData = JSON.parse(localStorage.getItem("currentUser"));
+    if (userData && userData.user) {
+      user = userData.user; // Extraer solo los datos del usuario
+    }
+  } catch (error) {
+    console.error('Error al obtener datos del usuario:', error);
+  }
+  
   // Elimina enlaces previos si existen
   const prev = document.getElementById("roleLink");
   if (prev) prev.remove();
+  
   if (user) {
     // Añadir enlace según rol
     let link = document.createElement("a");
     link.id = "roleLink";
     link.className = "font-bold text-white hover:bg-[#6633ee] transition-colors rounded-2xl px-3 py-2 text-center";
-    if (user.rol === "Admin") {
+    
+    // Acceder al rol a través de user.rol (en minúsculas según la respuesta de la API)
+    if (user.rol && user.rol.toLowerCase() === "admin") {
       link.href = "/admin";
       link.textContent = "Administrador";
     } else {

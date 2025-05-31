@@ -12,9 +12,56 @@ const api = axios.create({
 
 // Obtener usuario actual
 export const getCurrentUser = () => {
-  const user = localStorage.getItem('currentUser');
-  return user ? JSON.parse(user) : null;
+  try {
+    console.log('Buscando usuario en localStorage (apiService)...');
+    const userData = localStorage.getItem('currentUser');
+    console.log('Datos encontrados (apiService):', userData);
+    return userData ? JSON.parse(userData) : null;
+  } catch (error) {
+    console.error('Error al obtener el usuario actual (apiService):', error);
+    return null;
+  }
 };
+
+// Función para obtener el token de autenticación
+const getAuthToken = () => {
+  const userData = getCurrentUser();
+  return userData?.token || '';
+};
+
+// Interceptor para añadir el token a las peticiones
+api.interceptors.request.use(
+  (config) => {
+    const token = getAuthToken();
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Interceptor para manejar errores de autenticación
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.error('Error en la petición:', error);
+    
+    if (error.response?.status === 401) {
+      console.log('Error 401 - No autorizado');
+      // Eliminar datos de usuario si la sesión expiró
+      localStorage.removeItem('currentUser');
+      // Redirigir al login
+      window.location.href = '/login';
+      if (window.location.pathname !== '/') {
+        window.location.href = '/';
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 // Iniciar sesión
 export const login = async (username, password) => {

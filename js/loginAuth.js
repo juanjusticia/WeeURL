@@ -1,34 +1,102 @@
 // loginAuth.js
 import { login as apiLogin, register as apiRegister } from './apiService';
 
+// Función para iniciar sesión con Google
+function loginWithGoogle() {
+  try {
+    // Redirigir al endpoint de autenticación de Google
+    window.location.href = '/api/auth/google';
+  } catch (error) {
+    console.error('Error al intentar iniciar sesión con Google:', error);
+    showLoginMessage('Error al intentar iniciar sesión con Google', 'error');
+  }
+}
+
+// Función para manejar la respuesta de Google después de la autenticación
+function handleGoogleAuthResponse() {
+  // Verificar si hay una respuesta de Google en la URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const responseData = urlParams.get('response');
+  
+  if (responseData) {
+    try {
+      // Decodificar y parsear la respuesta JSON
+      const response = JSON.parse(decodeURIComponent(responseData));
+      
+      if (response.token && response.user) {
+        // Crear el objeto de usuario en el formato esperado
+        const userData = {
+          token: response.token,
+          userId: response.user.id,
+          user: {
+            id: response.user.id,
+            username: response.user.username,
+            email: response.user.email,
+            rol: response.user.rol
+          },
+          expiresIn: response.expiresIn || 86400, // Valor por defecto de 24 horas
+          message: response.message || 'Inicio de sesión con Google exitoso',
+          timestamp: Date.now() // Añadir timestamp para control de expiración
+        };
+        
+        console.log('Guardando datos de Google en localStorage:', userData);
+        localStorage.setItem('currentUser', JSON.stringify(userData));
+        
+        // Limpiar la URL después de procesar la respuesta
+        const cleanUrl = window.location.origin + window.location.pathname;
+        window.history.replaceState({}, document.title, cleanUrl);
+        
+        // Redirigir al dashboard o página principal
+        window.location.href = '/';
+      }
+    } catch (error) {
+      console.error('Error al procesar la respuesta de Google:', error);
+      showLoginMessage('Error al procesar la respuesta de autenticación', 'error');
+    }
+  }
+}
+
 async function login(username, password) {
   try {
+    console.log('Iniciando sesión con usuario:', username);
     const response = await apiLogin(username, password);
-    if (response) {
-      // Store user data
-      console.log(response);
-      localStorage.setItem('currentUser', JSON.stringify(response));
-      return response;
+    console.log('Respuesta de la API:', response);
+    
+    if (response && response.token) {
+      // Agregar timestamp para control de expiración
+      const userData = {
+        ...response,
+        timestamp: Date.now() // Guardar el momento en que se inicia sesión
+      };
+      
+      console.log('Guardando datos de usuario en localStorage:', userData);
+      localStorage.setItem('currentUser', JSON.stringify(userData));
+      
+      // Verificar que se guardó correctamente
+      const savedData = localStorage.getItem('currentUser');
+      console.log('Datos guardados en localStorage:', savedData);
+      
+      return userData;
     }
     return null;
   } catch (error) {
-    console.error('Login error:', error);
-    return null;
+    console.error('Error en el inicio de sesión:', error);
+    throw error; // Propagar el error para manejarlo en el formulario
   }
 }
 
 async function register(userData) {
   try {
     const response = await apiRegister(userData);
-    if (response) {
-      // Store user data
+    if (response && response.token) {
+      // Guardar la respuesta completa en localStorage
       localStorage.setItem('currentUser', JSON.stringify(response));
-      return true;
+      return response;
     }
-    return false;
+    return null;
   } catch (error) {
-    console.error('Registration error:', error);
-    return false;
+    console.error('Error en el registro:', error);
+    throw error; // Propagar el error para manejarlo en el formulario
   }
 }
 
@@ -61,6 +129,15 @@ function showLoginMessage(msg, type = "info") {
 }
 
 window.addEventListener("DOMContentLoaded", () => {
+  // Manejar la respuesta de autenticación de Google si es necesario
+  handleGoogleAuthResponse();
+  
+  // Configurar el botón de Google
+  const googleLoginBtn = document.getElementById('googleLoginBtn');
+  if (googleLoginBtn) {
+    googleLoginBtn.addEventListener('click', loginWithGoogle);
+  }
+  
   const form = document.querySelector("#loginModal form");
   if (!form) return;
   
