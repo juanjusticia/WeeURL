@@ -1,5 +1,6 @@
 ---
 import Footer from '../components/Footer.astro';
+import LoginModal from '../components/LoginModal.astro';
 import "@fontsource-variable/plus-jakarta-sans";
 ---
 
@@ -13,10 +14,12 @@ import "@fontsource-variable/plus-jakarta-sans";
 		<script src="../../js/login.js" defer></script>
 		<title>WeeURL</title>
 	</head>
-	<body class="flex flex-col min-h-screen">
-		<main class="flex-grow">
+	<body class="flex flex-col min-h-screen bg-gradient-to-b from-gray-900 to-gray-800">
+		<!-- Añadido pt-24 para dar más espacio al header fijo -->
+		<main class="flex-grow pt-24">
 			<div class="light"></div>
 			<slot />
+			<LoginModal />
 			<script src="../../js/light.js"></script>
 		</main>
 	</body>

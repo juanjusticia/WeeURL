@@ -85,7 +85,7 @@ export default function UsersTable() {
         const token = getAuthToken();
         
         if (!token) {
-          navigateTo('/login');
+          navigateTo('/');
           return;
         }
 
@@ -102,7 +102,6 @@ export default function UsersTable() {
         }
 
         const userData = await userResponse.json();
-        
         // Verificar si el usuario es administrador
         if (userData.rol !== 'admin') {
           navigateTo('/');
