@@ -1,5 +1,5 @@
 ---
-import LoginModal from "../components/LoginModal.astro";
+// LoginModal is included in the Layout
 ---
 <div class="flex flex-col items-center justify-center flex-grow h-3/4">
     <div class="mb-8 grid grid-cols-1 px-4 md:px-0"> 
@@ -8,7 +8,7 @@ import LoginModal from "../components/LoginModal.astro";
             <div>
                 <h1 class="text-4xl mb-4 font-bold">El mejor acortador de URLs</h1>
                 <p class="text-pretty mb-4">Crea URLs más cortas con <span>WeeURL</span>.</p>
-                <p class="text-pretty">¿Quieres más de tu acortador de enlaces? Rastrea las analíticas de los enlaces, usa dominios personalizados para enlaces completamente personalizados y gestiona tus enlaces con nuestros planes de pago.</p>
+                <p class="text-pretty">Simplifica tus enlaces largos al instante con WeeURL. Crea URLs cortas y fáciles de compartir en cualquier lugar. Ideal para redes sociales, mensajería o cuando necesites ahorrar espacio. ¡Rápido, sencillo y sin complicaciones!</p>
             </div>
             <div class="text-black rounded-lg mb-8 w-full h-auto pt-2 pb-2 grid grid-cols-1 justify-center items-center">
                 <form id="shortenerForm" class="bg-white/90 rounded-lg p-4 grid grid-cols-1 w-full shadow-[#8d6aed] shadow-xl">
@@ -21,5 +21,4 @@ import LoginModal from "../components/LoginModal.astro";
         </div>
     </div>
 
-    <LoginModal />
     <script src="/js/shortener.js" defer></script>

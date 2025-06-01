@@ -120,10 +120,20 @@ export const getLink = async (codEnlace) => {
 // Eliminar un enlace
 export const deleteLink = async (linkId) => {
   try {
-    const response = await api.delete(`/enlaces/${linkId}`);
+    const token = getAuthToken();
+    const response = await api.delete(`/links/${linkId}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
     return response.data;
   } catch (error) {
     console.error('Error al eliminar el enlace:', error);
+    if (error.response?.status === 401) {
+      // Token inválido o expirado
+      localStorage.removeItem('currentUser');
+      window.location.href = '/login';
+    }
     throw error;
   }
 };

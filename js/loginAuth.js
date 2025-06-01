@@ -216,29 +216,48 @@ async function register(userData) {
 // Manejo del formulario
 function showLoginMessage(msg, type = "info") {
   let msgDiv = document.getElementById("loginMessage");
+  const modalContent = document.querySelector("#loginModal .modal-content");
+  const modalTitle = document.querySelector("#loginModal h2");
+  
   if (!msgDiv) {
     msgDiv = document.createElement("div");
     msgDiv.id = "loginMessage";
-    msgDiv.style.position = "absolute";
-    msgDiv.style.top = "16px";
-    msgDiv.style.left = "50%";
-    msgDiv.style.transform = "translateX(-50%)";
-    msgDiv.style.zIndex = "50";
-    msgDiv.style.padding = "10px 24px";
+    msgDiv.style.width = "100%";
+    msgDiv.style.padding = "12px 16px";
     msgDiv.style.borderRadius = "8px";
-    msgDiv.style.fontWeight = "bold";
-    msgDiv.style.fontSize = "1rem";
-    msgDiv.style.boxShadow = "0 2px 12px 0 rgba(0,0,0,0.08)";
-    document.getElementById("loginModal").appendChild(msgDiv);
+    msgDiv.style.marginBottom = "16px";
+    msgDiv.style.fontWeight = "500";
+    msgDiv.style.fontSize = "0.95rem";
+    msgDiv.style.boxShadow = "0 1px 3px rgba(0,0,0,0.1)";
+    
+    // Insertar después del título
+    if (modalTitle && modalTitle.parentNode) {
+      modalTitle.parentNode.insertBefore(msgDiv, modalTitle.nextSibling);
+    } else if (modalContent) {
+      modalContent.insertBefore(msgDiv, modalContent.firstChild);
+    } else {
+      document.getElementById("loginModal").appendChild(msgDiv);
+    }
   }
   msgDiv.textContent = msg;
-  msgDiv.style.background = type === "error" ? "#fee2e2" : type === "success" ? "#d1fae5" : "#ede9fe";
-  msgDiv.style.color = type === "error" ? "#b91c1c" : type === "success" ? "#065f46" : "#4f46e5";
-  msgDiv.style.border = type === "error" ? "1px solid #fca5a5" : type === "success" ? "1px solid #6ee7b7" : "1px solid #a5b4fc";
+  msgDiv.style.background = type === "error" ? "#fef2f2" : type === "success" ? "#ecfdf5" : "#f5f3ff";
+  msgDiv.style.color = type === "error" ? "#dc2626" : type === "success" ? "#059669" : "#4f46e5";
+  msgDiv.style.borderLeft = type === "error" ? "4px solid #dc2626" : type === "success" ? "4px solid #059669" : "4px solid #4f46e5";
   msgDiv.style.opacity = "1";
+  msgDiv.style.transition = "opacity 0.3s ease-in-out";
+  
+  // Asegurarse de que el mensaje sea visible
+  msgDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  
   setTimeout(() => {
     msgDiv.style.opacity = "0";
-  }, 2200);
+    // Eliminar el mensaje después de la animación
+    setTimeout(() => {
+      if (msgDiv.parentNode) {
+        msgDiv.parentNode.removeChild(msgDiv);
+      }
+    }, 300);
+  }, 3000);
 }
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -284,6 +303,28 @@ window.addEventListener("DOMContentLoaded", () => {
   
   const form = document.querySelector("#loginModal form");
   if (!form) return;
+  
+  // Configurar el botón de registro
+  const toggleRegisterBtn = document.getElementById('toggleExtraField');
+  const extraField = document.getElementById('extraField');
+  const loginField = document.getElementById('loginField');
+  const labelRegistro = document.getElementById('labelRegistro');
+  
+  if (toggleRegisterBtn && extraField && loginField && labelRegistro) {
+    toggleRegisterBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const isHidden = extraField.classList.toggle('hidden');
+      loginField.textContent = isHidden ? 'Login' : 'Registro';
+      toggleRegisterBtn.textContent = isHidden ? 'Regístrate' : 'Iniciar sesión';
+      labelRegistro.textContent = isHidden ? '¿No tienes una cuenta?' : '¿Ya tienes una cuenta?';
+      
+      // Cambiar el texto del botón de envío
+      const submitButton = form.querySelector('button[type="submit"]');
+      if (submitButton) {
+        submitButton.textContent = isHidden ? 'Iniciar sesión' : 'Registrarse';
+      }
+    });
+  }
   
   form.addEventListener("submit", async function (e) {
     e.preventDefault();
