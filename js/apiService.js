@@ -53,10 +53,20 @@ api.interceptors.response.use(
       console.log('Error 401 - No autorizado');
       // Eliminar datos de usuario si la sesión expiró
       localStorage.removeItem('currentUser');
-      // Redirigir al login
-      window.location.href = '/login';
-      if (window.location.pathname !== '/') {
-        window.location.href = '/';
+      
+      // Mostrar mensaje de error en la interfaz si existe el elemento
+      let errorMessage = 'Usuario o contraseña incorrectos. Por favor, inténtalo de nuevo.';
+      // Si el error es específico de credenciales inválidas
+      if (error.response?.data?.message?.toLowerCase().includes('credenciales') || 
+          error.response?.data?.message?.toLowerCase().includes('incorrect')) {
+        errorMessage = 'Usuario o contraseña incorrectos. Por favor, verifica tus datos.';
+      }
+      
+      const loginMessage = document.getElementById('loginMessage');
+      if (loginMessage) {
+        loginMessage.textContent = errorMessage;
+        loginMessage.classList.remove('hidden');
+        loginMessage.classList.add('text-red-500');
       }
     }
     return Promise.reject(error);
@@ -110,10 +120,21 @@ export const getLink = async (codEnlace) => {
 // Eliminar un enlace
 export const deleteLink = async (linkId) => {
   try {
-    const response = await api.delete(`/links/${linkId}`);
+    const response = await api.delete(`/enlaces/${linkId}`);
     return response.data;
   } catch (error) {
     console.error('Error al eliminar el enlace:', error);
+    throw error;
+  }
+};
+
+// Eliminar un usuario
+export const deleteUser = async (userId) => {
+  try {
+    const response = await api.delete(`/usuarios/${userId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al eliminar el usuario:', error);
     throw error;
   }
 };

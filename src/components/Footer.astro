@@ -2,12 +2,12 @@
 // Footer.astro
 ---
 
-<footer class="fixed bottom-0 w-full bg-gray-800/60 text-white py-4 text-center ">
-    <div class="max-w-screen-xl mx-auto px-4">
-        <p>&copy; {new Date().getFullYear()} Juan Isaac Justicia.</p>
-        <ul class="list-none p-0 mt-4 flex justify-center gap-4">
+<footer class="fixed bottom-0 w-full bg-gray-800/60 text-white py-4">
+    <div class="max-w-screen-xl mx-auto px-4 flex justify-between items-center">
+        <p class="text-sm">&copy; {new Date().getFullYear()} Juan Isaac Justicia</p>
+        <ul class="list-none p-0 flex gap-4 text-sm">
             <li><a href="/privacy-policy" class="text-white hover:underline">Política de privacidad</a></li>
-            <li><a href="/terms-of-service" class="text-white hover:underline">Términos de servicio</a></li>
+            <li><a href="/terms-of-service" class="text-white hover:underline">Términos</a></li>
             <li><a href="/contact" class="text-white hover:underline">Contacto</a></li>
         </ul>
     </div>

@@ -18,20 +18,23 @@ document.addEventListener("DOMContentLoaded", function () {
   if (prev) prev.remove();
   
   if (user) {
-    // Añadir enlace según rol
-    let link = document.createElement("a");
-    link.id = "roleLink";
-    link.className = "font-bold text-white hover:bg-[#6633ee] transition-colors rounded-2xl px-3 py-2 text-center";
+    // Crear enlace al Dashboard para todos los usuarios autenticados
+    let dashboardLink = document.createElement("a");
+    dashboardLink.id = "dashboardLink";
+    dashboardLink.href = "/dashboard";
+    dashboardLink.textContent = "Dashboard";
+    dashboardLink.className = "font-bold text-white hover:bg-[#6633ee] transition-colors rounded-2xl px-3 py-2 text-center";
+    nav.insertBefore(dashboardLink, loginBtn);
     
-    // Acceder al rol a través de user.rol (en minúsculas según la respuesta de la API)
+    // Si el usuario es admin, añadir también el enlace de Administrador
     if (user.rol && user.rol.toLowerCase() === "admin") {
-      link.href = "/admin";
-      link.textContent = "Administrador";
-    } else {
-      link.href = "/dashboard";
-      link.textContent = "Dashboard";
+      let adminLink = document.createElement("a");
+      adminLink.id = "adminLink";
+      adminLink.href = "/admin";
+      adminLink.textContent = "Administrador";
+      adminLink.className = "font-bold text-white hover:bg-[#6633ee] transition-colors rounded-2xl px-3 py-2 text-center";
+      nav.insertBefore(adminLink, loginBtn);
     }
-    nav.insertBefore(link, loginBtn);
     // Botón logout
     loginBtn.textContent = "Logout";
     loginBtn.onclick = function () {

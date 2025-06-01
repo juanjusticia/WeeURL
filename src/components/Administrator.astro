@@ -1,43 +1,49 @@
 ---
-// Componente visual de administración de usuarios, estilo Welcome
-const usuarios = [
-  { id: 1, nombre: "Juan", email: "juan@email.com", rol: "Admin" },
-  { id: 2, nombre: "Ana", email: "ana@email.com", rol: "Usuario" },
-  { id: 3, nombre: "Luis", email: "luis@email.com", rol: "Usuario" },
-]; 
+import UsersTable from './react/UsersTable';
+
+// Administrator.astro
+// Componente principal del panel de administración
 ---
+
 <div class="flex flex-col items-center justify-center flex-grow min-h-[70vh]">
-  <div class="mb-8 grid grid-cols-1 px-4 md:px-0 w-full max-w-xl">
+  <div class="w-full max-w-6xl px-4 md:px-6">
     <h1 class="text-center text-4xl mb-10 text-white font-bold">
-      Administración de <span class="font-bold text-[#8d6aed]">Usuarios</span>
+      Administración de <span class="text-[#8d6aed]">Usuarios</span>
     </h1>
-    <div class="bg-white/90 rounded-lg p-4 md:p-6 shadow-[#8d6aed] shadow-xl overflow-x-auto">
-      <table class="min-w-full border border-gray-200 rounded-lg overflow-hidden">
-        <thead class="bg-[#f3f0fa] sticky top-0 z-10">
-          <tr>
-            <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider border-b border-gray-200">Nombre</th>
-            <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider border-b border-gray-200">Email</th>
-            <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider border-b border-gray-200">Rol</th>
-            <th class="px-4 py-3 border-b border-gray-200"></th>
-          </tr>
-        </thead>
-        <tbody>
-          {usuarios.map((usuario, idx) => (
-            <tr class={idx % 2 === 0 ? 'bg-white' : 'bg-[#f6f5fb]'}>
-              <td class="px-4 py-4 whitespace-nowrap text-gray-800 font-medium border-b border-gray-100">{usuario.nombre}</td>
-              <td class="px-4 py-4 whitespace-nowrap text-gray-700 border-b border-gray-100">{usuario.email}</td>
-              <td class="px-4 py-4 whitespace-nowrap text-gray-700 border-b border-gray-100">{usuario.rol}</td>
-              <td class="px-4 py-4 whitespace-nowrap flex gap-2 border-b border-gray-100">
-                <button class="bg-[#6633ee]/80 hover:bg-[#6633ee] text-white rounded-lg px-3 py-1 font-semibold transition-colors text-xs shadow">Editar</button>
-                <button class="bg-red-500/80 hover:bg-red-500 text-white rounded-lg px-3 py-1 font-semibold transition-colors text-xs shadow">Eliminar</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <div class="flex justify-end mt-6">
-        <button class="bg-[#8d6aed]/80 hover:bg-[#6633ee] text-white rounded-2xl px-6 py-2 font-bold transition-colors shadow-md">Agregar usuario</button>
+    
+    <div class="bg-white/90 rounded-lg p-6 mb-8 shadow-[#8d6aed] shadow-lg">
+      <div class="mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">Lista de Usuarios</h2>
       </div>
+      
+      {/* Componente de React */}
+      <UsersTable client:load />
     </div>
   </div>
 </div>
+
+<style>
+  /* Estilos personalizados para la tabla */
+  table {
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  
+  th, td {
+    padding: 0.75rem 1.5rem;
+  }
+  
+  thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+  
+  tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 0.5rem;
+  }
+  
+  tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 0.5rem;
+  }
+</style>

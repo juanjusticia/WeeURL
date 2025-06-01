@@ -1,0 +1,58 @@
+---
+import UserLinksTable from '../../../components/react/UserLinksTable';
+import Layout from '../../../layouts/Layout.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+import '../../../styles/global.css';
+
+const { id } = Astro.params;
+
+// Asegurarse de que el ID esté definido
+if (!id) {
+  throw new Error('ID de usuario no especificado');
+}
+---
+
+<Layout>
+  <Header />
+  
+  <div class="flex flex-col items-center justify-center flex-grow min-h-[70vh]">
+    <div class="w-full max-w-6xl px-4 md:px-6">
+      <h1 class="text-center text-4xl mb-10 text-white font-bold">
+        Enlaces de <span class="text-[#8d6aed]">Usuario</span>
+      </h1>
+      
+      <div class="bg-white/90 rounded-lg p-6 mb-8 shadow-[#8d6aed] shadow-lg">
+        <UserLinksTable client:load userId={id} />
+      </div>
+    </div>
+  </div>
+  
+  <Footer />
+  
+  <style>
+    /* Estilos personalizados para la tabla */
+    table {
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+    
+    th, td {
+      padding: 0.75rem 1.5rem;
+    }
+    
+    thead th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    
+    tbody tr:last-child td:first-child {
+      border-bottom-left-radius: 0.5rem;
+    }
+    
+    tbody tr:last-child td:last-child {
+      border-bottom-right-radius: 0.5rem;
+    }
+  </style>
+</Layout>

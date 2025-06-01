@@ -348,7 +348,16 @@ window.addEventListener("DOMContentLoaded", () => {
       }
     } catch (error) {
       console.error('Authentication error:', error);
-      const errorMessage = error.response?.data?.message || 'Error de conexión. Inténtalo de nuevo.';
+      let errorMessage = 'Error de conexión. Inténtalo de nuevo.';
+      
+      // Manejar específicamente errores de credenciales incorrectas
+      if (error.response?.status === 401) {
+        errorMessage = 'Usuario o contraseña incorrectos. Por favor, inténtalo de nuevo.';
+      } else if (error.response?.data?.message) {
+        // Usar el mensaje del servidor si está disponible
+        errorMessage = error.response.data.message;
+      }
+      
       showLoginMessage(errorMessage, "error");
     } finally {
       // Restore button state
