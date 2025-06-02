@@ -74,8 +74,7 @@ async function handlePasswordRecovery(event) {
       if (contentType && contentType.includes('application/json')) {
         data = await response.json();
       } else {
-        const text = await response.text();
-        console.error('Respuesta inesperada del servidor:', text);
+        await response.text();
         throw new Error('El servidor devolvió una respuesta inesperada');
       }
       
@@ -152,7 +151,6 @@ function handleGoogleAuthResponse() {
           timestamp: Date.now() // Añadir timestamp para control de expiración
         };
         
-        console.log('Guardando datos de Google en localStorage:', userData);
         localStorage.setItem('currentUser', JSON.stringify(userData));
         
         // Limpiar la URL después de procesar la respuesta
@@ -171,9 +169,7 @@ function handleGoogleAuthResponse() {
 
 async function login(username, password) {
   try {
-    console.log('Iniciando sesión con usuario:', username);
     const response = await apiLogin(username, password);
-    console.log('Respuesta de la API:', response);
     
     if (response && response.token) {
       // Agregar timestamp para control de expiración
@@ -182,13 +178,7 @@ async function login(username, password) {
         timestamp: Date.now() // Guardar el momento en que se inicia sesión
       };
       
-      console.log('Guardando datos de usuario en localStorage:', userData);
       localStorage.setItem('currentUser', JSON.stringify(userData));
-      
-      // Verificar que se guardó correctamente
-      const savedData = localStorage.getItem('currentUser');
-      console.log('Datos guardados en localStorage:', savedData);
-      
       return userData;
     }
     return null;

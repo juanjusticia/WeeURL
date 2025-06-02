@@ -149,8 +149,6 @@ export const SupportTicketsTable = () => {
         status: newStatus
       };
       
-      console.log('Actualizando estado del ticket:', { ticketId, updateData });
-
       // Usar la ruta relativa ya que el proxy está configurado
       const response = await fetch(`/api/admin/support/${ticketId}`, {
         method: 'PUT',

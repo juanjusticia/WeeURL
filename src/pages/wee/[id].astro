@@ -83,7 +83,6 @@ import '../../styles/global.css';
         updateUI('Buscando enlace...', 'Estamos verificando tu enlace acortado');
         
         const linkData = await getLink(id);
-        console.log('Link data:', linkData);
         
         if (linkData?.enlace_largo) {
           updateUI('¡Redirigiendo!', 'Serás redirigido en breve...');

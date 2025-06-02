@@ -13,9 +13,7 @@ const api = axios.create({
 // Obtener usuario actual
 export const getCurrentUser = () => {
   try {
-    console.log('Buscando usuario en localStorage (apiService)...');
     const userData = localStorage.getItem('currentUser');
-    console.log('Datos encontrados (apiService):', userData);
     return userData ? JSON.parse(userData) : null;
   } catch (error) {
     console.error('Error al obtener el usuario actual (apiService):', error);
@@ -50,7 +48,6 @@ api.interceptors.response.use(
     console.error('Error en la petición:', error);
     
     if (error.response?.status === 401) {
-      console.log('Error 401 - No autorizado');
       // Eliminar datos de usuario si la sesión expiró
       localStorage.removeItem('currentUser');
       

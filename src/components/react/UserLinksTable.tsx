@@ -53,10 +53,7 @@ export default function UserLinksTable({ userId }: UserLinksTableProps) {
   const handleCopy = (codEnlace: string) => {
     if (typeof window !== 'undefined') {
       const fullUrl = `${window.location.origin}/wee/${codEnlace}`;
-      navigator.clipboard.writeText(fullUrl).then(() => {
-        // Aquí podrías agregar un toast de confirmación
-        console.log('Enlace copiado al portapapeles');
-      }).catch(err => {
+      navigator.clipboard.writeText(fullUrl).catch(err => {
         console.error('Error al copiar el enlace:', err);
       });
     }
@@ -89,7 +86,6 @@ export default function UserLinksTable({ userId }: UserLinksTableProps) {
       setAllLinks(allLinks.filter(link => link.id !== linkId));
       
       // Aquí podrías agregar un toast de éxito
-      console.log('Enlace eliminado correctamente');
     } catch (err) {
       console.error('Error al eliminar el enlace:', err);
       // Aquí podrías agregar un toast de error
@@ -138,11 +134,9 @@ export default function UserLinksTable({ userId }: UserLinksTableProps) {
           throw new Error('Error al cargar la información del usuario');
         }
         const userData = await userResponse.json();
-        console.log('Datos del usuario:', userData);
         setUserInfo({ username: userData.nombre_usuario });
 
         // Obtener enlaces del usuario
-        console.log('Solicitando enlaces para el usuario ID:', userId);
         const linksResponse = await fetch(`/api/usuarios/${userId}/enlaces`, {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -155,7 +149,6 @@ export default function UserLinksTable({ userId }: UserLinksTableProps) {
         }
 
         const data: ApiResponse = await linksResponse.json();
-        console.log('Datos de la API:', data);
         setAllLinks(data.enlaces);
         setTotalItems(data.enlaces.length);
         setTotalPages(Math.ceil(data.enlaces.length / ITEMS_PER_PAGE));
