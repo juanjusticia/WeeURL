@@ -30,29 +30,28 @@ Sigue estos pasos para configurar el proyecto localmente:
    git clone https://github.com/juanjusticia/WeeURL.git
    cd WeeURL
    ```
-
 2. **Instala las dependencias**
+   ------
+   ¡Recuerda tener activado el uso de scripts para poder usar npm!
+   Lo puedes activar haciendo uso de este comando en Powershell.
+   ```bash
+   Set-ExecutionPolicy Unrestricted
+   ```
+   ------
    ```bash
    npm install
    # o
    yarn install
    ```
 
-3. **Configura las variables de entorno**
-   Crea un archivo `.env` en la raíz del proyecto con las siguientes variables:
-   ```env
-   PUBLIC_API_URL=https://apiweeurl.onrender.com
-   # Otras variables de entorno necesarias
-   ```
-
-4. **Inicia el servidor de desarrollo**
+3. **Inicia el servidor de desarrollo**
    ```bash
    npm run dev
    # o
    yarn dev
    ```
 
-5. **Abre tu navegador**
+4. **Abre tu navegador**
    Visita [http://localhost:4321](http://localhost:4321) para ver la aplicación en acción.
 
 ## 🛠️ Tecnologías utilizadas
